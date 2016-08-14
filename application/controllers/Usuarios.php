@@ -30,9 +30,9 @@ class Usuarios extends CI_Controller {
 				$pass=null;
 				$bandera=0;
 				foreach ($datos['respuesta_db']->result() as $atributo) {
-					$rut=$atributo->rut;
-					$nombre=$atributo->nombre;
-					$pass=$atributo->pass;
+					$rut=$atributo->rut_admin;
+					$nombre=$atributo->nombre_admin;
+					$pass=$atributo->pass_admin;
 
 					if ($auxiliar['rut']=$rut && $auxiliar['pass']=$pass && !empty($auxiliar['rut'])) {
 						$cookie['rut']=$rut;
@@ -55,7 +55,7 @@ class Usuarios extends CI_Controller {
 				echo "Error contactando a la base de datos";
 			}
 
-			$datos['respuesta_db']=$this->Usuarios_Model->consultar_alumno($auxiliar);
+			$datos['respuesta_db']=$this->Usuarios_Model->consultar_usuario($auxiliar);
 
 			if($datos['respuesta_db']!=false){
 				$rut=null;
@@ -63,9 +63,9 @@ class Usuarios extends CI_Controller {
 				$pass=null;
 				$bandera=0;
 				foreach ($datos['respuesta_db']->result() as $atributo) {
-					$rut=$atributo->rut;
-					$nombre=$atributo->nombre;
-					$pass=$atributo->pass;
+					$rut=$atributo->rut_usuario;
+					$nombre=$atributo->nombre_usuario;
+					$pass=$atributo->pass_usuario;
 					if ($auxiliar['rut']=$rut && $auxiliar['pass']=$pass) {
 						$cookie['rut']=$rut;
 						$cookie['nombre']=$nombre;

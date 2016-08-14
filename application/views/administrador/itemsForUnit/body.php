@@ -13,7 +13,7 @@
 							<?php
 							foreach($datos['respuesta_uni']->result() as $respuesta_uniElement){
 								?>
-								<option value="<?php echo $respuesta_uniElement->id?>"><?php echo $respuesta_uniElement->nombre?></option>
+								<option value="<?php echo $respuesta_uniElement->id_uni?>"><?php echo $respuesta_uniElement->nombre_uni?></option>
 								<?php
 							}
 							?>

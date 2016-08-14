@@ -27,16 +27,16 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `administrador` (
-  `rut` int(11) NOT NULL,
-  `nombre` varchar(250) DEFAULT NULL,
-  `pass` varchar(250) DEFAULT NULL
+  `rut_admin` int(11) NOT NULL,
+  `nombre_admin` varchar(250) DEFAULT NULL,
+  `pass_admin` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `administrador`
 --
 
-INSERT INTO `administrador` (`rut`, `nombre`, `pass`) VALUES
+INSERT INTO `administrador` (`rut_admin`, `nombre_admin`, `pass_admin`) VALUES
 (1234, 'kari', '111'),
 (18000, 'JUAN', '123');
 
@@ -47,17 +47,17 @@ INSERT INTO `administrador` (`rut`, `nombre`, `pass`) VALUES
 --
 
 CREATE TABLE `aviso_problema` (
-  `id` int(11) NOT NULL,
-  `tipo` varchar(250) NOT NULL,
-  `item_relacionado` varchar(250) NOT NULL,
-  `descripcion` text NOT NULL
+  `id_aviso` int(11) NOT NULL,
+  `tipo_aviso` varchar(250) NOT NULL,
+  `item_relacionado_aviso` varchar(250) NOT NULL,
+  `descripcion_aviso` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `aviso_problema`
 --
 
-INSERT INTO `aviso_problema` (`id`, `tipo`, `item_relacionado`, `descripcion`) VALUES
+INSERT INTO `aviso_problema` (`id_aviso`, `tipo_aviso`, `item_relacionado_aviso`, `descripcion_aviso`) VALUES
 (8, 'PC NO ENCIENDE', '6', 'asdasdasda'),
 (9, 'PC NO ENCIENDE', '6', 'hola'),
 (10, 'DESCARGA LENTA', '9', 'holi'),
@@ -67,8 +67,8 @@ INSERT INTO `aviso_problema` (`id`, `tipo`, `item_relacionado`, `descripcion`) V
 -- Disparadores `aviso_problema`
 --
 DELIMITER $$
-CREATE TRIGGER `aviso_historico` AFTER INSERT ON `aviso_problema` FOR EACH ROW insert into historico_item(id_item,fecha,descripcion) VALUES
-(new.item_relacionado,now(),concat('Se agregó aviso, item id=',new.item_relacionado,', problema=',new.tipo,', descripcion=',new.descripcion))
+CREATE TRIGGER `aviso_historico` AFTER INSERT ON `aviso_problema` FOR EACH ROW insert into historico_item(id_item_hi,fecha_hi,descripcion_hi) VALUES
+(new.item_relacionado_aviso,now(),concat('Se agregó aviso, item id=',new.item_relacionado_aviso,', problema=',new.tipo_aviso,', descripcion=',new.descripcion_aviso))
 $$
 DELIMITER ;
 
@@ -79,17 +79,17 @@ DELIMITER ;
 --
 
 CREATE TABLE `departamento` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(250) DEFAULT NULL,
-  `ubicacion` varchar(250) NOT NULL,
-  `id_facultad` int(11) DEFAULT NULL
+  `id_depto` int(11) NOT NULL,
+  `nombre_depto` varchar(250) DEFAULT NULL,
+  `ubicacion_depto` varchar(250) NOT NULL,
+  `id_facultad_depto` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `departamento`
 --
 
-INSERT INTO `departamento` (`id`, `nombre`, `ubicacion`, `id_facultad`) VALUES
+INSERT INTO `departamento` (`id_depto`, `nombre_depto`, `ubicacion_depto`, `id_facultad_depto`) VALUES
 (1, 'INFORMATICA', '', 1),
 (2, 'CONSTRUCCION', '', 1);
 
@@ -100,19 +100,20 @@ INSERT INTO `departamento` (`id`, `nombre`, `ubicacion`, `id_facultad`) VALUES
 --
 
 CREATE TABLE `empresa_externa` (
-  `id` int(11) NOT NULL,
-  `tipo` varchar(250) DEFAULT NULL,
-  `nombre` varchar(250) DEFAULT NULL
+  `id_ex` int(11) NOT NULL,
+  `tipo_ex` varchar(250) DEFAULT NULL,
+  `ubicacion_ex` varchar(250) default NULL,
+  `nombre_ex` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `empresa_externa`
 --
 
-INSERT INTO `empresa_externa` (`id`, `tipo`, `nombre`) VALUES
-(1, 'PROVEEDOR', 'MSI'),
-(2, 'DESECHOS TECNOLOGICOS', 'ECO_PC LTDA.'),
-(3, 'REPARADOR', 'SERVICIO TECNICO PC LTDA.');
+INSERT INTO `empresa_externa` (`id_ex`, `tipo_ex`,`ubicacion_ex` ,`nombre_ex`) VALUES
+(1, 'PROVEEDOR','' ,'MSI'),
+(2, 'DESECHOS TECNOLOGICOS','' ,'ECO_PC LTDA.'),
+(3, 'REPARADOR','','SERVICIO TECNICO PC LTDA.');
 
 -- --------------------------------------------------------
 
@@ -121,24 +122,24 @@ INSERT INTO `empresa_externa` (`id`, `tipo`, `nombre`) VALUES
 --
 
 CREATE TABLE `equipo` (
-  `id_componente` int(11) NOT NULL,
-  `descripcion` varchar(250) DEFAULT NULL,
-  `tipo` varchar(250) DEFAULT NULL,
-  `estado` varchar(250) DEFAULT NULL,
-  `fecha_ingreso` datetime DEFAULT NULL,
-  `fecha_baja` datetime DEFAULT NULL,
-  `veces_reparacion` int(11) DEFAULT NULL,
-  `id_equipo_relacionado` int(11) DEFAULT NULL,
-  `id_pieza_nueva` int(11) DEFAULT NULL,
-  `id_empresa_reparadora` int(11) DEFAULT NULL,
-  `id_empresa_desechadora` int(11) DEFAULT NULL
+  `id_cpt` int(11) NOT NULL,
+  `descripcion_cpt` varchar(250) DEFAULT NULL,
+  `tipo_cpt` varchar(250) DEFAULT NULL,
+  `estado_cpt` varchar(250) DEFAULT NULL,
+  `fecha_ingreso_cpt` datetime DEFAULT NULL,
+  `fecha_baja_cpt` datetime DEFAULT NULL,
+  `veces_reparacion_cpt` int(11) DEFAULT NULL,
+  `id_equipo_relacionado_cpt` int(11) DEFAULT NULL,
+  `id_pieza_nueva_cpt` int(11) DEFAULT NULL,
+  `id_empresa_reparadora_cpt` int(11) DEFAULT NULL,
+  `id_empresa_desechadora_cpt` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `equipo`
 --
 
-INSERT INTO `equipo` (`id_componente`, `descripcion`, `tipo`, `estado`, `fecha_ingreso`, `fecha_baja`, `veces_reparacion`, `id_equipo_relacionado`, `id_pieza_nueva`, `id_empresa_reparadora`, `id_empresa_desechadora`) VALUES
+INSERT INTO `equipo` (`id_componente_cpt`, `descripcion_cpt`, `tipo_cpt`, `estado_cpt`, `fecha_ingreso_cpt`, `fecha_baja_cpt`, `veces_reparacion_cpt`, `id_equipo_relacionado_cpt`, `id_pieza_nueva_cpt`, `id_empresa_reparadora_cpt`, `id_empresa_desechadora_cpt`) VALUES
 (18, NULL, 'MONITOR', 'DE BAJA', '2016-07-13 07:26:42', '2016-07-22 10:13:27', 0, 6, NULL, NULL, NULL),
 (19, NULL, 'MOUSE', 'REPARACION', '2016-07-13 07:26:42', NULL, 2, 6, NULL, NULL, NULL),
 (20, NULL, 'TECLADO', 'REPARACION', '2016-07-13 07:26:42', NULL, 2, 6, NULL, NULL, NULL),
@@ -184,54 +185,73 @@ INSERT INTO `equipo` (`id_componente`, `descripcion`, `tipo`, `estado`, `fecha_i
 --
 DELIMITER $$
 CREATE TRIGGER `cambiar_estado_componente` BEFORE UPDATE ON `equipo` FOR EACH ROW BEGIN
-		IF NOT(NEW.estado <=> OLD.estado) THEN
-      INSERT into historico_item(id_item,id_componente,fecha,descripcion)
-      VALUES(old.id_equipo_relacionado,old.id_componente,now(),concat("Se actualizó estado equipo id=",old.id_componente," de PC id=",old.id_equipo_relacionado," de",old.estado," a ",new.estado));
-			IF NEW.estado='REPARACION' THEN
-				SET NEW.veces_reparacion=OLD.veces_reparacion+1;
+		IF NOT(NEW.estado_cpt <=> OLD.estado_cpt) THEN
+      INSERT into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi)
+      VALUES(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se actualizó estado equipo id=",old.id_cpt," de PC id=",old.id_equipo_relacionado_cpt," de",old.estado_cpt," a ",new.estado_cpt));
+			IF NEW.estado_cpt='REPARACION' THEN
+				SET NEW.veces_reparacion_cpt=OLD.veces_reparacion_cpt+1;
 
 				UPDATE item
-				SET veces_reparacion=veces_reparacion+1
-				WHERE id=OLD.id_equipo_relacionado;
+				SET veces_reparacion_item=veces_reparacion_item+1
+				WHERE id_item=OLD.id_equipo_relacionado_cpt;
 
-				IF old.id_pieza_nueva IS NOT NULL THEN
+				IF old.id_pieza_nueva_cpt IS NOT NULL THEN
 					UPDATE item
-					SET veces_reparacion=veces_reparacion+1
-					WHERE id=OLD.id_pieza_nueva;
+					SET veces_reparacion_item=veces_reparacion_item+1
+					WHERE id_item=OLD.id_pieza_nueva_cpt;
 				END IF;
 			END IF;
-			IF NEW.estado='DE BAJA' THEN
-				SET NEW.fecha_baja=now();
+			IF NEW.estado_cpt='DE BAJA' THEN
+				SET NEW.fecha_baja_cpt=now();
 			END IF;
 		END IF;
 	END
 $$
 DELIMITER ;
+
+
+
+
+
+
+
 DELIMITER $$
 CREATE TRIGGER `cambiar_estado_componente_i` AFTER UPDATE ON `equipo` FOR EACH ROW BEGIN
 		DECLARE num_rep INT default 0;
 		DECLARE num_tran INT default 0;
+		DECLARE num_baj INT default 0;
+		DECLARE total INT default 0;
 		DECLARE sum INT default 0;
-		SELECT COUNT(*) INTO num_rep FROM equipo WHERE estado='REPARACION' AND id_equipo_relacionado=old.id_equipo_relacionado;
-		SELECT COUNT(*) INTO num_tran FROM equipo WHERE estado='EN TRANSITO' AND id_equipo_relacionado=old.id_equipo_relacionado;
+		SELECT COUNT(*) INTO num_rep FROM equipo WHERE estado_cpt='REPARACION' AND id_equipo_relacionado_cpt=old.id_equipo_relacionado_cpt;
+		SELECT COUNT(*) INTO num_tran FROM equipo WHERE estado_cpt='EN TRANSITO' AND id_equipo_relacionado_cpt=old.id_equipo_relacionado_cpt;
+		SELECT COUNT(*) INTO num_baj FROM equipo WHERE estado_cpt='DE BAJA' AND id_equipo_relacionado_cpt=old.id_equipo_relacionado_cpt;
+		SELECT COUNT(*) INTO total FROM equipo WHERE id_equipo_relacionado_cpt=old.id_equipo_relacionado_cpt;
+
 		set sum=num_rep+num_tran;
-		IF sum>0 THEN
-			IF num_rep>0 THEN
-				update item
-				set estado='REPARACION'
-				where id=old.id_equipo_relacionado;
-			ELSE 
-				IF num_tran>0 THEN
-					update item
-					set estado='EN TRANSITO'
-					where id=old.id_equipo_relacionado;
-				END IF;
-			END IF; 
-		else
+
+		if num_baj=total THEN
 			update item
-			set estado='ACTIVO'
-			where id=old.id_equipo_relacionado;
-		end IF;
+			set estado_item='DE BAJA'
+			where id_item=old.id_equipo_relacionado_cpt;
+		else
+			IF sum>0 THEN
+				IF num_rep>0 THEN
+					update item
+					set estado_item='REPARACION'
+					where id_item=old.id_equipo_relacionado_cpt;
+				ELSE 
+					IF num_tran>0 THEN
+						update item
+						set estado_item='EN TRANSITO'
+						where id_item=old.id_equipo_relacionado_cpt;
+					END IF;
+				END IF; 
+			else 
+				update item
+				set estado_item='ACTIVO'
+				where id_item=old.id_equipo_relacionado_cpt;
+			end if;
+		end if;
 	END
 $$
 DELIMITER ;
@@ -243,17 +263,17 @@ DELIMITER ;
 --
 
 CREATE TABLE `facultad` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(250) DEFAULT NULL,
-  `ubicacion` varchar(250) NOT NULL,
-  `id_universidad` int(11) DEFAULT NULL
+  `id_facultad` int(11) NOT NULL,
+  `nombre_facultad` varchar(250) DEFAULT NULL,
+  `ubicacion_facultad` varchar(250) NOT NULL,
+  `id_universidad_facultad` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `facultad`
 --
 
-INSERT INTO `facultad` (`id`, `nombre`, `ubicacion`, `id_universidad`) VALUES
+INSERT INTO `facultad` (`id_facultad`, `nombre_facultad`, `ubicacion_facultad`, `id_universidad_facultad`) VALUES
 (1, 'INGENIERIA', '', 1),
 (2, 'MEDICINA', '', 1);
 
@@ -264,18 +284,18 @@ INSERT INTO `facultad` (`id`, `nombre`, `ubicacion`, `id_universidad`) VALUES
 --
 
 CREATE TABLE `historico_item` (
-  `id` int(11) NOT NULL,
-  `id_item` int(11) NOT NULL,
-  `id_componente` int(11) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `descripcion` text NOT NULL
+  `id_hi` int(11) NOT NULL,
+  `id_item_hi` int(11) NOT NULL,
+  `id_componente_hi` int(11) NOT NULL,
+  `fecha_hi` datetime NOT NULL,
+  `descripcion_hi` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `historico_item`
 --
 
-INSERT INTO `historico_item` (`id`, `id_item`, `id_componente`, `fecha`, `descripcion`) VALUES
+INSERT INTO `historico_item` (`id_hi`, `id_item_hi`, `id_componente_hi`, `fecha_hi`, `descripcion_hi`) VALUES
 (1, 9, 0, '2016-07-26 22:26:19', 'Se agregó PC id=9 y sus componentes'),
 (2, 10, 0, '2016-07-26 22:28:54', 'Se agregó item id=10'),
 (3, 11, 0, '2016-07-26 22:35:02', 'Se agregó PROCESADORid=11'),
@@ -298,25 +318,25 @@ INSERT INTO `historico_item` (`id`, `id_item`, `id_componente`, `fecha`, `descri
 --
 
 CREATE TABLE `item` (
-  `id` int(11) NOT NULL,
-  `tipo` varchar(250) DEFAULT NULL,
-  `descripcion` varchar(250) DEFAULT NULL,
-  `estado` varchar(250) DEFAULT NULL,
-  `fecha_ingreso` datetime DEFAULT NULL,
-  `fecha_baja` datetime DEFAULT NULL,
-  `veces_reparacion` int(11) DEFAULT '0',
-  `id_item_relacionado` int(11) DEFAULT NULL,
-  `id_unidad` int(11) DEFAULT NULL,
-  `id_empresa_proveedora` int(11) DEFAULT NULL,
-  `id_empresa_reparadora` int(11) DEFAULT NULL,
-  `id_empresa_desechadora` int(11) DEFAULT NULL
+  `id_item` int(11) NOT NULL,
+  `tipo_item` varchar(250) DEFAULT NULL,
+  `descripcion_item` varchar(250) DEFAULT NULL,
+  `estado_item` varchar(250) DEFAULT NULL,
+  `fecha_ingreso_item` datetime DEFAULT NULL,
+  `fecha_baja_item` datetime DEFAULT NULL,
+  `veces_reparacion_item` int(11) DEFAULT '0',
+  `id_item_relacionado_item` int(11) DEFAULT NULL,
+  `id_unidad_item` int(11) DEFAULT NULL,
+  `id_empresa_proveedora_item` int(11) DEFAULT NULL,
+  `id_empresa_reparadora_item` int(11) DEFAULT NULL,
+  `id_empresa_desechadora_item` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `item`
 --
 
-INSERT INTO `item` (`id`, `tipo`, `descripcion`, `estado`, `fecha_ingreso`, `fecha_baja`, `veces_reparacion`, `id_item_relacionado`, `id_unidad`, `id_empresa_proveedora`, `id_empresa_reparadora`, `id_empresa_desechadora`) VALUES
+INSERT INTO `item` (`id_item`, `tipo_item`, `descripcion_item`, `estado_item`, `fecha_ingreso_item`, `fecha_baja_item`, `veces_reparacion_item`, `id_item_relacionado_item`, `id_unidad_item`, `id_empresa_proveedora_item`, `id_empresa_reparadora_item`, `id_empresa_desechadora_item`) VALUES
 (2, 'RAM', 'RAM 1GB', 'ACTIVO', '2016-07-16 09:25:27', NULL, 5, 7, NULL, NULL, NULL, NULL),
 (6, 'EQUIPO', 'PC001', 'REPARACION', '2016-07-13 07:26:42', NULL, 5, NULL, 1, 2, NULL, NULL),
 (7, 'EQUIPO', 'PC010', 'ACTIVO', '2016-07-22 11:25:31', NULL, 2, NULL, 4, 1, NULL, NULL),
@@ -332,69 +352,74 @@ INSERT INTO `item` (`id`, `tipo`, `descripcion`, `estado`, `fecha_ingreso`, `fec
 --
 DELIMITER $$
 CREATE TRIGGER `agregar_componentes_equipo` AFTER INSERT ON `item` FOR EACH ROW BEGIN
-		IF NEW.tipo='EQUIPO' THEN 
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('MONITOR','ACTIVO',NEW.fecha_ingreso,0,NEW.id)	;
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('MOUSE','ACTIVO',NEW.fecha_ingreso,0,NEW.id);
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('TECLADO','ACTIVO',NEW.fecha_ingreso,0,NEW.id);
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('RAM','ACTIVO',NEW.fecha_ingreso,0,NEW.id);
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('PROCESADOR','ACTIVO',NEW.fecha_ingreso,0,NEW.id);
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('HDD','ACTIVO',NEW.fecha_ingreso,0,NEW.id);
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('MOTHERBOARD','ACTIVO',NEW.fecha_ingreso,0,NEW.id);
-			INSERT INTO equipo(tipo,estado,fecha_ingreso,veces_reparacion,id_equipo_relacionado)
-			VALUES('FUENTE PODER','ACTIVO',NEW.fecha_ingreso,0,NEW.id);
+		IF NEW.tipo_item='EQUIPO' THEN 
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('MONITOR','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item)	;
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('MOUSE','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item);
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('TECLADO','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item);
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('RAM','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item);
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('PROCESADOR','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item);
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('HDD','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item);
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('MOTHERBOARD','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item);
+			INSERT INTO equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt)
+			VALUES('FUENTE PODER','ACTIVO',NEW.fecha_ingreso_item,0,NEW.id_item);
 
-      INSERT into historico_item(id_item,fecha,descripcion)
-      VALUES(new.id,now(),concat("Se agregó PC id=",new.id," y sus componentes"));
+      INSERT into historico_item(id_item_hi,fecha_hi,descripcion_hi)
+      VALUES(new.id_item,now(),concat("Se agregó PC id=",new.id_item," y sus componentes"));
 		ELSE
-      INSERT into historico_item(id_item,fecha,descripcion)
-      VALUES(new.id,now(),concat("Se agregó ",new.tipo," id=",new.id));
+      INSERT into historico_item(id_item_hi,fecha_hi,descripcion_hi)
+      VALUES(new.id_item,now(),concat("Se agregó ",new.tipo_item," id=",new.id_item));
     END IF;
 
 
 	END
 $$
 DELIMITER ;
+
+
+
 DELIMITER $$
 CREATE TRIGGER `cambiar_estado_item` BEFORE UPDATE ON `item` FOR EACH ROW BEGIN
 		DECLARE variable int;
-		IF NOT(NEW.estado <=>  OLD.estado) THEN
-      insert into historico_item(id_item,fecha,descripcion)
-      values(old.id,now(),concat("Se actualizó estado item id=",old.id," de ",old.estado," a ",new.estado));
-			IF NEW.estado='REPARACION' THEN
+		IF NOT(NEW.estado_item <=>  OLD.estado_item) THEN
+      insert into historico_item(id_item_hi,fecha_hi,descripcion_hi)
+      values(old.id_item,now(),concat("Se actualizó estado item id=",old.id_item," de ",old.estado_item," a ",new.estado_item));
+			IF NEW.estado_item='REPARACION' THEN
 			
-				IF OLD.tipo!='EQUIPO' THEN
-					SET NEW.veces_reparacion=OLD.veces_reparacion+1;
+				IF OLD.tipo_item!='EQUIPO' THEN
+					SET NEW.veces_reparacion_item=OLD.veces_reparacion_item+1;
 				END IF;
 			END IF;
-			IF NEW.estado='DE BAJA' THEN
-				IF OLD.tipo!='EQUIPO' THEN
-					SET NEW.fecha_baja=getdate();
+			IF NEW.estado_item='DE BAJA' THEN
+				IF OLD.tipo_item!='EQUIPO' THEN
+					SET NEW.fecha_baja_item=now();
 				END IF;
 			END IF;
 		END IF;
-		IF NOT(NEW.fecha_baja <=> OLD.fecha_baja) THEN
-			SET NEW.estado='DE BAJA';
+		IF NOT(NEW.fecha_baja_item <=> OLD.fecha_baja_item) THEN
+			SET NEW.estado_item='DE BAJA';
 		END IF;
-		IF NOT(NEW.id_item_relacionado <=> OLD.id_item_relacionado) THEN
-			SELECT count(*) INTO variable FROM equipo WHERE id_pieza_nueva=OLD.id;
+		IF NOT(NEW.id_item_relacionado_item <=> OLD.id_item_relacionado_item) THEN
+			SELECT count(*) INTO variable FROM equipo WHERE id_pieza_nueva_cpt=OLD.id_item;
 			IF variable=0 THEN 
-				INSERT into equipo(tipo,estado,veces_reparacion,id_equipo_relacionado,id_pieza_nueva)
-				values(OLD.tipo,OLD.estado,OLD.veces_reparacion,NEW.id_item_relacionado,OLD.id);
+				INSERT into equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt,id_pieza_nueva_cpt)
+				values(OLD.tipo_item,OLD.estado_item,now(),OLD.veces_reparacion_item,NEW.id_item_relacionado_item,OLD.id_item);
 			END IF;
 		END IF;
 	END
 $$
 DELIMITER ;
+
+
 DELIMITER $$
 CREATE TRIGGER `insertar_item` BEFORE INSERT ON `item` FOR EACH ROW BEGIN
-	set new.estado='ACTIVO';
+	set new.estado_item='ACTIVO';
 END
 $$
 DELIMITER ;
@@ -406,17 +431,17 @@ DELIMITER ;
 --
 
 CREATE TABLE `unidad` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(250) DEFAULT NULL,
-  `ubicacion` varchar(250) NOT NULL,
-  `id_depto` int(11) DEFAULT NULL
+  `id_unidad` int(11) NOT NULL,
+  `nombre_unidad` varchar(250) DEFAULT NULL,
+  `ubicacion_unidad` varchar(250) NOT NULL,
+  `id_depto_unidad` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `unidad`
 --
 
-INSERT INTO `unidad` (`id`, `nombre`, `ubicacion`, `id_depto`) VALUES
+INSERT INTO `unidad` (`id_unidad`, `nombre_unidad`, `ubicacion_unidad`, `id_depto_unidad`) VALUES
 (1, 'DCI01', '', 1),
 (2, 'DCI02', '', 1),
 (3, 'DCI03', '', 1),
@@ -429,16 +454,16 @@ INSERT INTO `unidad` (`id`, `nombre`, `ubicacion`, `id_depto`) VALUES
 --
 
 CREATE TABLE `universidad` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(250) DEFAULT NULL,
-  `ubicacion` varchar(250) NOT NULL
+  `id_uni` int(11) NOT NULL,
+  `nombre_uni` varchar(250) DEFAULT NULL,
+  `ubicacion_uni` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `universidad`
 --
 
-INSERT INTO `universidad` (`id`, `nombre`, `ubicacion`) VALUES
+INSERT INTO `universidad` (`id_uni`, `nombre_uni`, `ubicacion_uni`) VALUES
 (1, 'UCM', ''),
 (2, 'UTAL', ''),
 (3, 'INACAP', ''),
@@ -451,16 +476,16 @@ INSERT INTO `universidad` (`id`, `nombre`, `ubicacion`) VALUES
 --
 
 CREATE TABLE `usuario` (
-  `rut` int(11) NOT NULL,
-  `nombre` varchar(250) DEFAULT NULL,
-  `pass` varchar(250) DEFAULT NULL
+  `rut_usuario` int(11) NOT NULL,
+  `nombre_usuario` varchar(250) DEFAULT NULL,
+  `pass_usuario` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`rut`, `nombre`, `pass`) VALUES
+INSERT INTO `usuario` (`rut_usuario`, `nombre_usuario`, `pass_usuario`) VALUES
 (12000, 'hola', '123');
 
 --
@@ -471,19 +496,19 @@ INSERT INTO `usuario` (`rut`, `nombre`, `pass`) VALUES
 -- Indices de la tabla `administrador`
 --
 ALTER TABLE `administrador`
-  ADD PRIMARY KEY (`rut`);
+  ADD PRIMARY KEY (`rut_admin`);
 
 --
 -- Indices de la tabla `aviso_problema`
 --
 ALTER TABLE `aviso_problema`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id_aviso`);
 
 --
 -- Indices de la tabla `departamento`
 --
 ALTER TABLE `departamento`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`id_depto`),
   ADD KEY `id_facultad` (`id_facultad`);
 
 --

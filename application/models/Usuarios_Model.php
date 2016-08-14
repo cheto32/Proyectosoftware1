@@ -8,17 +8,17 @@ class Usuarios_Model extends CI_Model{
 
 	public function consultar_administrador($arreglo){
 		$consulta="SELECT * FROM administrador WHERE
-					RUT='".$arreglo['rut']."' AND
-					pass='".$arreglo['pass']."'";
+					rut_admin='".$arreglo['rut']."' AND
+					pass_admin='".$arreglo['pass']."'";
 		$respuesta=$this->db->query($consulta);
 		if($respuesta) return $respuesta;
 		else return FALSE;
 	}
 
-	public function consultar_alumno($arreglo){
+	public function consultar_usuario($arreglo){
 		$consulta="SELECT * FROM usuario WHERE
-					RUT='".$arreglo['rut']."' AND
-					pass='".$arreglo['pass']."'";
+					rut_usuario='".$arreglo['rut']."' AND
+					pass_usuario='".$arreglo['pass']."'";
 		$respuesta=$this->db->query($consulta);
 		if($respuesta) return $respuesta;
 		else return FALSE;
