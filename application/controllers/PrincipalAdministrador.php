@@ -395,7 +395,7 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('historico_item');
 		$crud->set_subject('Histórico');
 
-		$crud->set_relation("id_item_hi","item","descripcion_item");
+		//$crud->set_relation("id_item_hi","item","descripcion_item");
 
 		$output = $crud->render();
 		$this->load->view('administrador/head',$output);
