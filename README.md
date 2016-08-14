@@ -1,5 +1,6 @@
-Grocery CRUD
+Proyecto Software 1
 =============
-Grocery CRUD is a PHP and Codeigniter Framework library that creates a full functional CRUD system without the need to customise JavaScript or CSS.
+Bienvenido al proyecto de software 1!.
+En el archivo .docx está el tema de lo que falta, y lo solucionado.
+Aquí iré los cambios que haga constantemente, es más rápido.
 
-For more information, visit http://www.grocerycrud.com
