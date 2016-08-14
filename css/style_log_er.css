@@ -1,0 +1,25 @@
+body{
+	background-color: #eee;
+}
+.aviso{
+	position: relative;
+
+	background-color: #ffffff;
+	border-radius: 25px;
+	height: 400px;
+}
+.aviso .titulo{
+	position: absolute;
+		top: 50%; left: 50%;
+		transform: translate(-50%,-50%);
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 40px;
+	text-align: center;
+}
+.aviso .titulo .sub{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 20px;
+	text-align: center;
+	color:grey;
+}
