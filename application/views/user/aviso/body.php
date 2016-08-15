@@ -1,6 +1,6 @@
 <!-- <body> de alumno/aside.php-->
 	<div class="col-md-10">
-		<form method="POST" action="<?php echo base_url();?>index.php/principalAlumno/envio_formulario">
+		<form method="POST" action="<?php echo base_url();?>index.php/principalUser/envio_formulario">
 		  	<fieldset class="form-group">
 			    <label for="exampleSelect1">Tipo Problema</label>
 			    <select id="id_select" class="form-control" onchange="hola()" name="input_select" >

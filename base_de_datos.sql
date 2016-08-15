@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-08-2016 a las 23:44:45
+-- Tiempo de generación: 15-08-2016 a las 07:59:34
 -- Versión del servidor: 10.1.13-MariaDB
--- Versión de PHP: 7.0.8
+-- Versión de PHP: 5.6.23
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -20,6 +20,57 @@ SET time_zone = "+00:00";
 -- Base de datos: `proyecto_software_uno`
 --
 
+DELIMITER $$
+--
+-- Funciones
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `validate_rut` (`RUT` VARCHAR(12)) RETURNS INT(11) BEGIN
+	DECLARE strlen INT;
+	DECLARE i INT;
+	DECLARE j INT;
+	DECLARE suma NUMERIC;
+	DECLARE temprut VARCHAR(12);
+	DECLARE verify_dv CHAR(2);
+	DECLARE DV CHAR(1);
+	SET RUT = REPLACE(REPLACE(RUT, '.', ''),'-','');
+	SET DV = SUBSTR(RUT,-1,1);
+	SET RUT = SUBSTR(RUT,1,LENGTH(RUT)-1);
+	SET i = 1;
+  	SET strlen = LENGTH(RUT);
+  	SET j = 2;
+  	SET suma = 0;
+	IF strlen = 8 OR strlen = 7 THEN
+		SET temprut = REVERSE(RUT);
+		moduloonce: LOOP
+		    IF i <= LENGTH(temprut) THEN
+    			SET suma = suma + (CONVERT(SUBSTRING(temprut, i, 1),UNSIGNED INTEGER) * j); 
+	      		SET i = i + 1;
+	      		IF j = 7 THEN
+		    		SET j = 2;
+	    		ELSE
+	    			SET j = j + 1;
+    			END IF;
+	      		ITERATE moduloonce;
+		    END IF;
+		    LEAVE moduloonce;
+	  	END LOOP moduloonce;
+	  	SET verify_dv = 11 - (suma % 11);
+	  	IF verify_dv = 11 THEN
+	  		SET verify_dv = 0;
+	  	ELSEIF verify_dv = 10 THEN 
+	  		SET verify_dv = 'K';
+	  	END IF;
+	  	IF DV = verify_dv THEN
+	  		RETURN 1;
+	  	ELSE 
+	  		RETURN 0;
+	  	END IF;
+	END IF;
+	RETURN 0;
+END$$
+
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -27,7 +78,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `administrador` (
-  `rut_admin` int(11) NOT NULL,
+  `rut_admin` varchar(12) NOT NULL,
   `nombre_admin` varchar(250) DEFAULT NULL,
   `pass_admin` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -37,7 +88,20 @@ CREATE TABLE `administrador` (
 --
 
 INSERT INTO `administrador` (`rut_admin`, `nombre_admin`, `pass_admin`) VALUES
-(18000, 'Juan', '123');
+('11111111-1', 'Juan', '123');
+
+--
+-- Disparadores `administrador`
+--
+DELIMITER $$
+CREATE TRIGGER `validar_rut_admin` BEFORE INSERT ON `administrador` FOR EACH ROW BEGIN
+	IF validate_rut(new.rut_admin)=0 THEN
+   		SIGNAL SQLSTATE '45000'
+      	SET MESSAGE_TEXT = 'RUT ISSUE';
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -58,7 +122,16 @@ CREATE TABLE `aviso_problema` (
 
 INSERT INTO `aviso_problema` (`id_aviso`, `tipo_aviso`, `item_relacionado_aviso`, `descripcion_aviso`) VALUES
 (1, 'HOLA', '', '<p>\r\n	asdasdsa</p>\r\n'),
-(2, 'asdasdas', '', '<p>\r\n	qeqwewqe</p>\r\n');
+(2, 'asdasdas', '', '<p>\r\n	qeqwewqe</p>\r\n'),
+(3, 'Problema 1', '1', 'asdf'),
+(4, 'VIBRACIÓN/RUIDO GABINETE', '1', 'Holamundo'),
+(5, 'PC NO ENCIENDE', '1', 'asdasdsadsadasdasd'),
+(6, 'PC NO ENCIENDE', '1', 'qwerty'),
+(7, 'PC NO ENCIENDE', '1', '1234'),
+(8, 'PC NO ENCIENDE', '1', 'zxcv'),
+(9, 'PC NO ENCIENDE', '1', '123'),
+(10, 'VENTANAS DE ERRORES', '1', 'zxcxzc'),
+(11, 'PC NO ENCIENDE', '1', 'zxcvfdsf');
 
 --
 -- Disparadores `aviso_problema`
@@ -247,7 +320,16 @@ INSERT INTO `historico_item` (`id_hi`, `id_item_hi`, `id_componente_hi`, `fecha_
 (1, 1, 0, '2016-08-14 17:13:41', 'Se agregó PC id=1 y sus componentes'),
 (2, 2, 0, '2016-08-14 17:14:19', 'Se agregó RAM id=2'),
 (3, 0, 0, '2016-08-14 17:15:04', 'Se agregó aviso, item id=, problema=HOLA, descripcion=<p>\r\n	asdasdsa</p>\r\n'),
-(4, 0, 0, '2016-08-14 17:15:12', 'Se agregó aviso, item id=, problema=asdasdas, descripcion=<p>\r\n	qeqwewqe</p>\r\n');
+(4, 0, 0, '2016-08-14 17:15:12', 'Se agregó aviso, item id=, problema=asdasdas, descripcion=<p>\r\n	qeqwewqe</p>\r\n'),
+(5, 1, 0, '2016-08-15 02:16:38', 'Se agregó aviso, item id=1, problema=Problema 1, descripcion=asdf'),
+(6, 1, 0, '2016-08-15 02:47:35', 'Se agregó aviso, item id=1, problema=VIBRACIÓN/RUIDO GABINETE, descripcion=Holamundo'),
+(7, 1, 0, '2016-08-15 02:51:52', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=asdasdsadsadasdasd'),
+(8, 1, 0, '2016-08-15 02:52:51', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=qwerty'),
+(9, 1, 0, '2016-08-15 02:53:04', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=1234'),
+(10, 1, 0, '2016-08-15 02:53:53', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=zxcv'),
+(11, 1, 0, '2016-08-15 02:55:05', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=123'),
+(12, 1, 0, '2016-08-15 02:55:25', 'Se agregó aviso, item id=1, problema=VENTANAS DE ERRORES, descripcion=zxcxzc'),
+(13, 1, 0, '2016-08-15 02:55:39', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=zxcvfdsf');
 
 -- --------------------------------------------------------
 
@@ -275,8 +357,8 @@ CREATE TABLE `item` (
 --
 
 INSERT INTO `item` (`id_item`, `tipo_item`, `descripcion_item`, `estado_item`, `fecha_ingreso_item`, `fecha_baja_item`, `veces_reparacion_item`, `id_item_relacionado_item`, `id_unidad_item`, `id_empresa_proveedora_item`, `id_empresa_reparadora_item`, `id_empresa_desechadora_item`) VALUES
-(1, 'EQUIPO', NULL, 'ACTIVO', '2016-08-10 00:00:00', NULL, 0, NULL, 1, NULL, NULL, NULL),
-(2, 'RAM', NULL, 'ACTIVO', '2016-08-16 00:00:00', NULL, 0, NULL, 2, NULL, NULL, NULL);
+(1, 'EQUIPO', 'PC01', 'ACTIVO', '2016-08-10 00:00:00', NULL, 0, NULL, 1, NULL, NULL, NULL),
+(2, 'RAM', 'RAM 1GB', 'ACTIVO', '2016-08-16 00:00:00', NULL, 0, NULL, 2, NULL, NULL, NULL);
 
 --
 -- Disparadores `item`
@@ -398,10 +480,30 @@ INSERT INTO `universidad` (`id_uni`, `nombre_uni`, `ubicacion_uni`) VALUES
 --
 
 CREATE TABLE `usuario` (
-  `rut_usuario` int(11) NOT NULL,
+  `rut_usuario` varchar(12) NOT NULL,
   `nombre_usuario` varchar(250) DEFAULT NULL,
   `pass_usuario` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`rut_usuario`, `nombre_usuario`, `pass_usuario`) VALUES
+('18123456-3', 'Juan 2', '123');
+
+--
+-- Disparadores `usuario`
+--
+DELIMITER $$
+CREATE TRIGGER `validar_rut_usuario` BEFORE INSERT ON `usuario` FOR EACH ROW BEGIN
+	IF validate_rut(new.rut_usuario)=0 THEN
+   		SIGNAL SQLSTATE '45000'
+      	SET MESSAGE_TEXT = 'RUT ISSUE';
+    END IF;
+END
+$$
+DELIMITER ;
 
 --
 -- Índices para tablas volcadas
@@ -478,15 +580,10 @@ ALTER TABLE `usuario`
 --
 
 --
--- AUTO_INCREMENT de la tabla `administrador`
---
-ALTER TABLE `administrador`
-  MODIFY `rut_admin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18001;
---
 -- AUTO_INCREMENT de la tabla `aviso_problema`
 --
 ALTER TABLE `aviso_problema`
-  MODIFY `id_aviso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_aviso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT de la tabla `departamento`
 --
@@ -511,7 +608,7 @@ ALTER TABLE `facultad`
 -- AUTO_INCREMENT de la tabla `historico_item`
 --
 ALTER TABLE `historico_item`
-  MODIFY `id_hi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_hi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT de la tabla `item`
 --
@@ -527,11 +624,6 @@ ALTER TABLE `unidad`
 --
 ALTER TABLE `universidad`
   MODIFY `id_uni` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
---
--- AUTO_INCREMENT de la tabla `usuario`
---
-ALTER TABLE `usuario`
-  MODIFY `rut_usuario` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

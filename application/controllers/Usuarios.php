@@ -76,7 +76,7 @@ class Usuarios extends CI_Controller {
 						
 						$this->load->view('login/acceso/head');
 						$this->load->view('login/acceso/body');
-						header("Refresh:2 ;url='".base_url()."index.php/principalAlumno' ");
+						header("Refresh:2 ;url='".base_url()."index.php/principalUser' ");
 						break;
 					}
 				}

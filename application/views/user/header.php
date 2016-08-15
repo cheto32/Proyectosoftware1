@@ -10,7 +10,7 @@
         	<span class="icon-bar"></span>
         	<span class="icon-bar"></span>
       	</button>
-      	<a class="navbar-brand" href="<?php echo base_url();?>index.php/principalAlumno/"><span class="glyphicon glyphicon-th-large"></span>  Sistema Inventario</a>
+      	<a class="navbar-brand" href="<?php echo base_url();?>index.php/principalUser/"><span class="glyphicon glyphicon-th-large"></span>  Sistema Inventario</a>
     	</div>
 
     	<!-- Collect the nav links, forms, and other content for toggling -->
@@ -37,7 +37,7 @@
         -->
 
       	<ul class="nav navbar-nav navbar-right">
-	        <li><a href="<?php echo base_url();?>index.php/usuarios/cerrar_sesion">Cerrar Sesion</a></li>
+	        <li><a href="<?php echo base_url();?>index.php/usuarios/cerrar_sesion">Cerrar Session</a></li>
       	</ul>
     	</div><!-- /.navbar-collapse -->
   	</div><!-- /.container-fluid -->
