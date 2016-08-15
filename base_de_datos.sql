@@ -95,7 +95,9 @@ INSERT INTO `administrador` (`rut_admin`, `nombre_admin`, `pass_admin`) VALUES
 --
 DELIMITER $$
 CREATE TRIGGER `validar_rut_admin` BEFORE INSERT ON `administrador` FOR EACH ROW BEGIN
-	IF validate_rut(new.rut_admin)=0 THEN
+	declare variable varchar(11);
+	select count(*) into variable from usuario where rut_usuario=new.rut_admin;
+	IF validate_rut(new.rut_admin)=0 OR variable>0 THEN
    		SIGNAL SQLSTATE '45000'
       	SET MESSAGE_TEXT = 'RUT ISSUE';
     END IF;
@@ -508,7 +510,9 @@ INSERT INTO `usuario` (`rut_usuario`, `nombre_usuario`, `pass_usuario`) VALUES
 --
 DELIMITER $$
 CREATE TRIGGER `validar_rut_usuario` BEFORE INSERT ON `usuario` FOR EACH ROW BEGIN
-	IF validate_rut(new.rut_usuario)=0 THEN
+	declare variable varchar(11);
+	select count(*) into variable from administrador where rut_admin=new.rut_usuario;
+	IF validate_rut(new.rut_usuario)=0 OR variable>0 THEN
    		SIGNAL SQLSTATE '45000'
       	SET MESSAGE_TEXT = 'RUT ISSUE';
     END IF;
