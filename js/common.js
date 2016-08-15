@@ -88,12 +88,15 @@ function opcionUnidad() {
 
 
 function loadData(loadType,loadId){
+	var project=window.location.pathname.split( '/' );
+	var base_url =window.location.origin;
+	
 	var dataString = 'loadType='+ loadType +'&loadId='+ loadId;
 	$("#"+loadType+"_loader").show();
     $("#"+loadType+"_loader").fadeIn(400).html('Espere...');
 	$.ajax({
 		type: "POST",
-		url: "http://localhost/proyectosoftware1/index.php/principaladministrador/loadData",
+		url: base_url+'/'+project[1]+"/index.php/principaladministrador/loadData",
 		data: dataString,
 		cache: false,
 		success: function(result){

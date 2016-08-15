@@ -18,6 +18,7 @@ class Usuarios extends CI_Controller {
 	}
 
 	public function validar_usuario(){
+
 		//Validar Administrador
 		$auxiliar['rut']=$this->input->post('input_rut');
 		$auxiliar['pass']=$this->input->post('input_pass');

@@ -32,7 +32,7 @@
 						</select>
 					</td>
 					<td>
-						<form method="POST" action="http://localhost/proyectosoftware1/index.php/principalUser/item_comboboxes">
+						<form method="POST" action="<?php echo base_url()?>index.php/principalUser/item_comboboxes">
 							<select name="unidad-post" class="form-control" id="unidad_dropdown" onchange="this.form.submit()">
 								<option value="-1">Seleccione unidad</option>
 								<span id="unidad_loader"></span>

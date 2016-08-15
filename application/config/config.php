@@ -23,7 +23,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/proyectosoftware1/';
+$variable_ip=getHostByName(getHostName());;
+$config['base_url'] = 'http://'.$variable_ip.'/proyectosoftware1/';
 
 /*
 |--------------------------------------------------------------------------
