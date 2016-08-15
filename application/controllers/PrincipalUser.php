@@ -164,12 +164,21 @@ class Principaluser extends CI_Controller {
 		$crud->columns('id_cpt','descripcion_cpt','tipo_cpt','estado_cpt','fecha_ingreso_cpt','fecha_baja_cpt','veces_reparacion_cpt','id_equipo_relacionado_cpt','id_pieza_nueva_cpt','id_empresa_reparadora_cpt','id_empresa_desechadora_cpt');
 		
 		$crud->display_as('id_cpt','ID');
+		$crud->display_as('descripcion_cpt','Descripcion');
+		$crud->display_as('estado_cpt','Estado Producto');
+		$crud->display_as('fecha_ingreso_cpt','Fecha Ingreso');
+		$crud->display_as('fecha_baja_cpt','Fecha Baja');
 		$crud->display_as('veces_reparacion_cpt','Número Reparaciones');
 		$crud->display_as('id_equipo_relacionado_cpt','ID Equipo');
 		$crud->display_as('id_pieza_nueva_cpt','ID Pieza');
 		$crud->display_as('id_empresa_reparadora_cpt','ID Emp. Reparadora');
 		$crud->display_as('id_empresa_desechadora_cpt','ID Emp. Desechadora');
 		$crud->display_as('tipo_cpt','Tipo de Producto');
+
+		$crud->set_relation('id_empresa_reparadora_cpt','empresa_externa','nombre_ex');
+		$crud->set_relation('id_empresa_desechadora_cpt','empresa_externa','nombre_ex');
+		$crud->set_relation('id_pieza_nueva_cpt','item','id_item');
+		$crud->set_relation('id_equipo_relacionado_cpt','item','id_item');
 
 		$crud->field_type('estado_cpt','dropdown',array('ACTIVO' => 'ACTIVO',
 													'REPARACION' => 'REPARACION',
@@ -269,7 +278,10 @@ class Principaluser extends CI_Controller {
 		$crud->set_table('historico_item');
 		$crud->set_subject('Histórico');
 
-		//$crud->set_relation("id_item_hi","item","descripcion_item");
+		$crud->display_as('id_item_hi','ID Item');
+		$crud->display_as('id_componente_hi','ID Componente');
+		$crud->display_as('fecha_hi','Fecha');
+		$crud->display_as('descripcion_hi','Descripción');
 
 		$output = $crud->render();
 		$this->load->view('user/head',$output);

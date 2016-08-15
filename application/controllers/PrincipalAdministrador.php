@@ -36,6 +36,11 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('empresa_externa');
 		$crud->set_subject('Empresas Externas');
 
+
+		$crud->display_as('id_ex','ID');
+		$crud->display_as('tipo_ex','Tipo Empresa');
+		$crud->display_as('nombre_ex','Nombre Empresa');
+
 		$crud->columns('id_ex','tipo_ex','nombre_ex');
 		$crud->required_fields('id_ex','tipo_ex','nombre_ex');
 
@@ -57,6 +62,11 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('usuario');
 		$crud->set_subject('Usuarios');
 
+		$crud->display_as('rut_usuario','RUT Usuario');
+		$crud->display_as('nombre_usuario','Nombre');
+		$crud->display_as('pass_usuario','Contraseña');
+
+
 		$crud->columns('rut_usuario','nombre_usuario','pass_usuario');
 		$crud->required_fields('rut_usuario','nombre_usuario','pass_usuario');
 		
@@ -73,6 +83,10 @@ class PrincipalAdministrador extends CI_Controller {
 
 		$crud->set_table('administrador');
 		$crud->set_subject('Administradores');
+
+		$crud->display_as('rut_admin','RUT Administrador');
+		$crud->display_as('nombre_admin','Nombre');
+		$crud->display_as('pass_admin','Contraseña');
 
 		$crud->columns('rut_admin','nombre_admin','pass_admin');
 		$crud->required_fields('rut_admin','nombre_admin','pass_admin');
@@ -92,6 +106,9 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('universidad');
 		$crud->set_subject('Universidades');
 
+		$crud->display_as('nombre_uni','Universidad');
+		$crud->display_as('ubicacion_uni','Dirección');
+
 		$crud->required_fields('nombre_uni');
 
 		$output = $crud->render();
@@ -107,6 +124,10 @@ class PrincipalAdministrador extends CI_Controller {
 
 		$crud->set_table('facultad');
 		$crud->set_subject('Facultades');
+
+		$crud->display_as('nombre_facultad','Facultad');
+		$crud->display_as('ubicacion_facultad','Dirección');
+		$crud->display_as('id_universidad_facultad','Universidad');
 
 		$crud->required_fields('nombre_facultad','id_universidad_facultad');
 
@@ -127,6 +148,10 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('departamento');
 		$crud->set_subject('Departamentos');
 
+		$crud->display_as('nombre_depto','Departamento');
+		$crud->display_as('ubicacion_depto','Dirección');
+		$crud->display_as('id_facultad_depto','Facultad');
+
 		$crud->required_fields('nombre_depto','id_facultad_depto');
 
 		$crud->set_relation('id_facultad_depto','facultad','nombre_facultad');
@@ -144,6 +169,10 @@ class PrincipalAdministrador extends CI_Controller {
 
 		$crud->set_table('unidad');
 		$crud->set_subject('Unidades');
+
+		$crud->display_as('nombre_unidad','Unidad');
+		$crud->display_as('ubicacion_unidad','Dirección');
+		$crud->display_as('id_depto_unidad','Departamento');
 
 		$crud->required_fields('nombre_unidad','id_depto_unidad');
 
@@ -290,12 +319,21 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->columns('id_cpt','descripcion_cpt','tipo_cpt','estado_cpt','fecha_ingreso_cpt','fecha_baja_cpt','veces_reparacion_cpt','id_equipo_relacionado_cpt','id_pieza_nueva_cpt','id_empresa_reparadora_cpt','id_empresa_desechadora_cpt');
 		
 		$crud->display_as('id_cpt','ID');
+		$crud->display_as('descripcion_cpt','Descripcion');
+		$crud->display_as('estado_cpt','Estado Producto');
+		$crud->display_as('fecha_ingreso_cpt','Fecha Ingreso');
+		$crud->display_as('fecha_baja_cpt','Fecha Baja');
 		$crud->display_as('veces_reparacion_cpt','Número Reparaciones');
 		$crud->display_as('id_equipo_relacionado_cpt','ID Equipo');
 		$crud->display_as('id_pieza_nueva_cpt','ID Pieza');
 		$crud->display_as('id_empresa_reparadora_cpt','ID Emp. Reparadora');
 		$crud->display_as('id_empresa_desechadora_cpt','ID Emp. Desechadora');
 		$crud->display_as('tipo_cpt','Tipo de Producto');
+
+		$crud->set_relation('id_empresa_reparadora_cpt','empresa_externa','nombre_ex');
+		$crud->set_relation('id_empresa_desechadora_cpt','empresa_externa','nombre_ex');
+		$crud->set_relation('id_pieza_nueva_cpt','item','id_item');
+		$crud->set_relation('id_equipo_relacionado_cpt','item','id_item');
 
 		$crud->field_type('estado_cpt','dropdown',array('ACTIVO' => 'ACTIVO',
 													'REPARACION' => 'REPARACION',
@@ -395,7 +433,13 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('historico_item');
 		$crud->set_subject('Histórico');
 
-		//$crud->set_relation("id_item_hi","item","descripcion_item");
+		$crud->display_as('id_item_hi','ID Item');
+		$crud->display_as('id_componente_hi','ID Componente');
+		$crud->display_as('fecha_hi','Fecha');
+		$crud->display_as('descripcion_hi','Descripción');
+
+		$crud->set_relation('id_item_hi','item','id_item');
+		$crud->set_relation('id_componente_hi','equipo','id_cpt');
 
 		$output = $crud->render();
 		$this->load->view('administrador/head',$output);
@@ -437,6 +481,9 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('aviso_problema');
 		$crud->set_subject('Aviso Problemas');
 
+		$crud->display_as('tipo_aviso','Tipo de Aviso');
+		$crud->display_as('item_relacionado_aviso','Item Relacionado');
+		$crud->display_as('descripcion_aviso','Descripción');
 
 		$crud->set_relation('item_relacionado_aviso','item','descripcion_item');
 

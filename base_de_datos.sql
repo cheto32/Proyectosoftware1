@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-08-2016 a las 07:59:34
+-- Tiempo de generación: 15-08-2016 a las 19:50:36
 -- Versión del servidor: 10.1.13-MariaDB
--- Versión de PHP: 5.6.23
+-- Versión de PHP: 7.0.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -277,6 +277,13 @@ CREATE TRIGGER `cambiar_estado_componente_i` AFTER UPDATE ON `equipo` FOR EACH R
 	END
 $$
 DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `equipo_historico` BEFORE INSERT ON `equipo` FOR EACH ROW BEGIN
+	insert into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi)
+		values(new.id_equipo_relacionado_cpt,new.id_pieza_nueva_cpt,now(),concat("Se agregó ",new.tipo_cpt,", componente ID=",new.id_cpt,", relacionado con PC ID=",new.id_equipo_relacionado_cpt,", pieza origen ID=",new.id_pieza_nueva_cpt));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -329,7 +336,8 @@ INSERT INTO `historico_item` (`id_hi`, `id_item_hi`, `id_componente_hi`, `fecha_
 (10, 1, 0, '2016-08-15 02:53:53', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=zxcv'),
 (11, 1, 0, '2016-08-15 02:55:05', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=123'),
 (12, 1, 0, '2016-08-15 02:55:25', 'Se agregó aviso, item id=1, problema=VENTANAS DE ERRORES, descripcion=zxcxzc'),
-(13, 1, 0, '2016-08-15 02:55:39', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=zxcvfdsf');
+(13, 1, 0, '2016-08-15 02:55:39', 'Se agregó aviso, item id=1, problema=PC NO ENCIENDE, descripcion=zxcvfdsf'),
+(14, 1, 2, '2016-08-15 14:41:02', 'Se agregó RAM, componente ID=0, relacionado con PC ID=1, pieza origen ID=2');
 
 -- --------------------------------------------------------
 
@@ -421,6 +429,9 @@ CREATE TRIGGER `cambiar_estado_item` BEFORE UPDATE ON `item` FOR EACH ROW BEGIN
 				INSERT into equipo(tipo_cpt,estado_cpt,fecha_ingreso_cpt,veces_reparacion_cpt,id_equipo_relacionado_cpt,id_pieza_nueva_cpt)
 				values(OLD.tipo_item,OLD.estado_item,now(),OLD.veces_reparacion_item,NEW.id_item_relacionado_item,OLD.id_item);
 			END IF;
+			If new.id_item_relacionado_item is null THEN
+				delete from equipo where id_pieza_nueva_cpt=old.id_item;
+			end if;
 		END IF;
 	END
 $$
@@ -598,7 +609,7 @@ ALTER TABLE `empresa_externa`
 -- AUTO_INCREMENT de la tabla `equipo`
 --
 ALTER TABLE `equipo`
-  MODIFY `id_cpt` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_cpt` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT de la tabla `facultad`
 --
@@ -608,7 +619,7 @@ ALTER TABLE `facultad`
 -- AUTO_INCREMENT de la tabla `historico_item`
 --
 ALTER TABLE `historico_item`
-  MODIFY `id_hi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_hi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT de la tabla `item`
 --
