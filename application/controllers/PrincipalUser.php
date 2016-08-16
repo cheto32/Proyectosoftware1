@@ -161,6 +161,8 @@ class Principaluser extends CI_Controller {
 		$crud->set_subject('Equipos');
 
 		$crud->unset_add();
+		$crud->unset_delete();
+
 		$crud->columns('id_cpt','descripcion_cpt','tipo_cpt','estado_cpt','fecha_ingreso_cpt','fecha_baja_cpt','veces_reparacion_cpt','id_equipo_relacionado_cpt','id_pieza_nueva_cpt','id_empresa_reparadora_cpt','id_empresa_desechadora_cpt');
 		
 		$crud->display_as('id_cpt','ID');
