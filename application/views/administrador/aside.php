@@ -25,7 +25,7 @@
         </div>
 
         <div class="panel-body">
-            <a id="instituciones_menu" class="color-panel" onclick="toggle_menu_2()">Usuarios</a>
+            <a id="instituciones_menu" class="color-panel" onclick="toggle_menu_2()">Roles</a>
         </div>
         <div id="usuarios" style="display: none;">
     			<div class="panel-body">
