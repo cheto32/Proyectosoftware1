@@ -177,7 +177,7 @@ CREATE TRIGGER `cambiar_estado_componente` BEFORE UPDATE ON `equipo` FOR EACH RO
 	IF NOT(NEW.estado_cpt <=> OLD.estado_cpt) and (old.id_pieza_nueva_cpt is null) THEN
     	
     	INSERT into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi)
-      	VALUES(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se cambió el estado de ",old.estado_cpt," a ",new.estado_cpt));
+      	VALUES(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se cambió el estado del componente ID=",old.id_cpt," de ",old.estado_cpt," a ",new.estado_cpt));
 
 			
 		IF NEW.estado_cpt='REPARACION' THEN
@@ -195,7 +195,7 @@ CREATE TRIGGER `cambiar_estado_componente` BEFORE UPDATE ON `equipo` FOR EACH RO
 		IF NOT(NEW.estado_cpt <=> OLD.estado_cpt) and (old.id_pieza_nueva_cpt is not null) THEN
 
 			INSERT into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi)
-      		VALUES(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se cambió el estado de ",old.estado_cpt," a ",new.estado_cpt));
+      		VALUES(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se cambió el estado del componente ID=",old.id_cpt," de ",old.estado_cpt," a ",new.estado_cpt));
 
 			update item
 			set estado_item=new.estado_cpt
@@ -230,8 +230,6 @@ CREATE TRIGGER `cambiar_estado_equipo` AFTER UPDATE ON `equipo` FOR EACH ROW BEG
 			set estado_item='DE BAJA'
 			where id_item=old.id_equipo_relacionado_cpt;
 
-			insert into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi) 
-				values(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se actualizó el estado del PC id=",old.id_equipo_relacionado_cpt," de ",old.estado_cpt," a ",new.estado_cpt));
 		else
 			IF sum>0 THEN
 				IF num_rep>0 THEN
@@ -239,16 +237,12 @@ CREATE TRIGGER `cambiar_estado_equipo` AFTER UPDATE ON `equipo` FOR EACH ROW BEG
 					set estado_item='REPARACION'
 					where id_item=old.id_equipo_relacionado_cpt;
 
-					insert into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi) 
-					values(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se actualizó el estado del PC id=",old.id_equipo_relacionado_cpt,"de",old.estado_cpt,"a",new.estado_cpt));
 				ELSE 
 					IF num_tran>0 THEN
 						update item
 						set estado_item='EN TRANSITO'
 						where id_item=old.id_equipo_relacionado_cpt;
 
-						insert into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi) 
-						values(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se actualizó el estado del PC id=",old.id_equipo_relacionado_cpt,"de",old.estado_cpt,"a",new.estado_cpt));
 					END IF;
 				END IF; 
 			else 
@@ -256,8 +250,6 @@ CREATE TRIGGER `cambiar_estado_equipo` AFTER UPDATE ON `equipo` FOR EACH ROW BEG
 				set estado_item='ACTIVO'
 				where id_item=old.id_equipo_relacionado_cpt;
 				
-				insert into historico_item(id_item_hi,id_componente_hi,fecha_hi,descripcion_hi) 
-				values(old.id_equipo_relacionado_cpt,old.id_cpt,now(),concat("Se actualizó el estado del PC id=",old.id_equipo_relacionado_cpt,"de",old.estado_cpt,"a",new.estado_cpt));
 			end if;
 		end if;
 	END IF;
@@ -374,7 +366,7 @@ CREATE TRIGGER `cambiar_estado_relacion_item` BEFORE UPDATE ON `item` FOR EACH R
 				values(OLD.tipo_item,OLD.estado_item,now(),OLD.veces_reparacion_item,NEW.id_item_relacionado_item,OLD.id_item);
 				
 				insert into historico_item(id_item_hi,fecha_hi,descripcion_hi)
-				values (new.id_item_relacionado_item,now(),concat("Se insertó nueva componente en Equipo= ",new.id_item_relacionado_item));		
+				values (new.id_item_relacionado_item,now(),concat("Se acopló item ID=",old.id_item," a Equipo ID=",new.id_item_relacionado_item));		
 			else
 				If new.id_item_relacionado_item is null THEN
 					delete from equipo where id_pieza_nueva_cpt=old.id_item;
@@ -392,6 +384,9 @@ CREATE TRIGGER `cambiar_estado_relacion_item` BEFORE UPDATE ON `item` FOR EACH R
 		END IF;
 
 		IF NOT(NEW.estado_item <=>  OLD.estado_item) THEN
+			insert into historico_item(id_item_hi,fecha_hi,descripcion_hi) 
+				values(old.id_item,now(),concat("Se actualizó el estado del PC ID=",old.id_item," de ",old.estado_item," a ",new.estado_item));
+	
 			IF(old.id_item_relacionado_item IS NULL) AND old.tipo_item!='EQUIPO' THEN
 				update equipo
 				set estado_cpt=new.estado_item
@@ -414,7 +409,6 @@ CREATE TRIGGER `cambiar_estado_relacion_item` BEFORE UPDATE ON `item` FOR EACH R
 			IF NOT(NEW.fecha_baja_item <=> OLD.fecha_baja_item) THEN
 				SET NEW.estado_item='DE BAJA';
 			END IF;
-			insert into historico_item(id_item_hi,fecha_hi,descripcion_hi) values (old.id_item,now(),concat("Se actualizó Equipo de estado= ",old.estado_item," a estado= ",new.estado_item));
 
 		END IF;
 	END

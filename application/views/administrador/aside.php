@@ -41,10 +41,7 @@
           <a class="color-panel" href="<?php echo base_url()?>index.php/principalAdministrador/equipo">Equipo</a>
         </div>
         <div class="panel-body">
-          <a class="color-panel" href="<?php echo base_url()?>index.php/principalAdministrador/item_comboboxes">Inventario por Unidad</a>
-        </div>
-        <div class="panel-body">
-          <a class="color-panel" href="<?php echo base_url()?>index.php/principalAdministrador/itemsFullList">Lista Completa Inventario</a>
+          <a class="color-panel" href="<?php echo base_url()?>index.php/principalAdministrador/item_comboboxes">Inventario</a>
         </div>
         <div class="panel-body">
           <a class="color-panel" href="<?php echo base_url()?>index.php/principalAdministrador/avisos">Avisos</a>

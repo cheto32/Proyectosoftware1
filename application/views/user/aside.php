@@ -9,11 +9,8 @@
 	    		<a class="color-panel" href="<?php echo base_url()?>index.php/principalUser/equipo">Equipo</a>
   			</div>
   			<div class="panel-body">
-	    		<a class="color-panel" href="<?php echo base_url()?>index.php/principalUser/item_comboboxes">Inventario por Unidad</a>
+	    		<a class="color-panel" href="<?php echo base_url()?>index.php/principalUser/item_comboboxes">Inventario</a>
   			</div>
-        <div class="panel-body">
-          <a class="color-panel" href="<?php echo base_url()?>index.php/principalUser/itemsFullList">Lista Completa Inventario</a>
-        </div>
       
         <div class="panel-body">
           <a class="color-panel" href="<?php echo base_url()?>index.php/principalUser/historico">Historico</a>
