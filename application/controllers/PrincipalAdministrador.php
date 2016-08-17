@@ -40,8 +40,9 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->display_as('id_ex','ID');
 		$crud->display_as('tipo_ex','Tipo Empresa');
 		$crud->display_as('nombre_ex','Nombre Empresa');
+		$crud->display_as('ubicacion_ex','Ubicación Empresa');
 
-		$crud->columns('id_ex','tipo_ex','nombre_ex');
+		$crud->columns('tipo_ex','nombre_ex','ubicacion_ex');
 		$crud->required_fields('id_ex','tipo_ex','nombre_ex');
 
 		$crud->field_type('tipo_ex','dropdown',array('PROVEEDOR' => 'PROVEEDOR',
@@ -278,7 +279,7 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_subject('Equipos');
 
 		$crud->unset_add();
-		$crud->columns('id_cpt','descripcion_cpt','tipo_cpt','estado_cpt','fecha_ingreso_cpt','fecha_baja_cpt','veces_reparacion_cpt','id_equipo_relacionado_cpt','id_pieza_nueva_cpt','id_empresa_reparadora_cpt','id_empresa_desechadora_cpt');
+		$crud->columns('id_cpt','descripcion_cpt','tipo_cpt','estado_cpt','fecha_ingreso_cpt','veces_reparacion_cpt','id_equipo_relacionado_cpt','id_pieza_nueva_cpt','id_empresa_reparadora_cpt','id_empresa_desechadora_cpt');
 		
 		$crud->display_as('id_cpt','ID');
 		$crud->display_as('descripcion_cpt','Descripcion');
@@ -421,12 +422,17 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->set_table('historico_item');
 		$crud->set_subject('Histórico');
 
+		$crud->columns('id_item_hi','fecha_hi','descripcion_hi');
+
 		$crud->display_as('id_item_hi','ID Item');
 		$crud->display_as('id_componente_hi','ID Componente');
 		$crud->display_as('fecha_hi','Fecha');
 		$crud->display_as('descripcion_hi','Descripción');
 
+		$crud->set_relation('id_item_hi','item','codigo_externo');
+
 		$crud->unset_edit();
+		$crud->unset_add();
 
 		$output = $crud->render();
 		$this->load->view('administrador/head',$output);
@@ -472,6 +478,7 @@ class PrincipalAdministrador extends CI_Controller {
 		$crud->display_as('descripcion_aviso','Descripción');
 
 		$crud->set_relation('item_relacionado_aviso','item','descripcion_item');
+		$crud->unset_add();
 
 		$output = $crud->render();
 		$this->load->view('administrador/head',$output);

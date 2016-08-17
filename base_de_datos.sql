@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-08-2016 a las 00:06:39
+-- Tiempo de generación: 17-08-2016 a las 13:36:09
 -- Versión del servidor: 10.1.13-MariaDB
 -- Versión de PHP: 7.0.8
 
@@ -84,6 +84,13 @@ CREATE TABLE `administrador` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Volcado de datos para la tabla `administrador`
+--
+
+INSERT INTO `administrador` (`rut_admin`, `nombre_admin`, `pass_admin`) VALUES
+('11111111-1', 'Default Admin', '123');
+
+--
 -- Disparadores `administrador`
 --
 DELIMITER $$
@@ -111,6 +118,7 @@ CREATE TABLE `aviso_problema` (
   `descripcion_aviso` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
 --
 -- Disparadores `aviso_problema`
 --
@@ -135,6 +143,8 @@ CREATE TABLE `departamento` (
   `id_facultad_depto` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+
 -- --------------------------------------------------------
 
 --
@@ -147,6 +157,7 @@ CREATE TABLE `empresa_externa` (
   `ubicacion_ex` varchar(250) DEFAULT NULL,
   `nombre_ex` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 -- --------------------------------------------------------
 
@@ -167,6 +178,7 @@ CREATE TABLE `equipo` (
   `id_empresa_reparadora_cpt` int(11) DEFAULT NULL,
   `id_empresa_desechadora_cpt` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 --
 -- Disparadores `equipo`
@@ -256,6 +268,7 @@ CREATE TRIGGER `cambiar_estado_equipo` AFTER UPDATE ON `equipo` FOR EACH ROW BEG
 END
 $$
 DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -268,6 +281,8 @@ CREATE TABLE `facultad` (
   `ubicacion_facultad` varchar(250) DEFAULT NULL,
   `id_universidad_facultad` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 -- --------------------------------------------------------
 
@@ -304,6 +319,7 @@ CREATE TABLE `item` (
   `id_empresa_reparadora_item` int(11) DEFAULT NULL,
   `id_empresa_desechadora_item` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 --
 -- Disparadores `item`
@@ -359,6 +375,18 @@ DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `cambiar_estado_relacion_item` BEFORE UPDATE ON `item` FOR EACH ROW BEGIN
 		DECLARE variable int;
+		declare old_unidad varchar(250);
+		declare new_unidad varchar(250);
+
+		IF NOT(NEW.id_unidad_item <=> OLD.id_unidad_item) THEN
+			select nombre_unidad into old_unidad from unidad where id_unidad=old.id_unidad_item;
+			select nombre_unidad into new_unidad from unidad where id_unidad=new.id_unidad_item;
+
+			insert into historico_item(id_item_hi,fecha_hi,descripcion_hi)
+			values (new.id_item,now(),concat("Se cambió de unidad ",old_unidad," a ",new_unidad));		
+		end if;
+
+
 		IF NOT(NEW.id_item_relacionado_item <=>  OLD.id_item_relacionado_item) THEN
 			SELECT count(*) INTO variable FROM equipo WHERE id_pieza_nueva_cpt=OLD.id_item;
 			IF variable=0 THEN
@@ -385,7 +413,7 @@ CREATE TRIGGER `cambiar_estado_relacion_item` BEFORE UPDATE ON `item` FOR EACH R
 
 		IF NOT(NEW.estado_item <=>  OLD.estado_item) THEN
 			insert into historico_item(id_item_hi,fecha_hi,descripcion_hi) 
-				values(old.id_item,now(),concat("Se actualizó el estado del PC ID=",old.id_item," de ",old.estado_item," a ",new.estado_item));
+				values(old.id_item,now(),concat("Se actualizó el estado de item ID=",old.id_item," de ",old.estado_item," a ",new.estado_item));
 	
 			IF(old.id_item_relacionado_item IS NULL) AND old.tipo_item!='EQUIPO' THEN
 				update equipo
@@ -457,6 +485,13 @@ CREATE TABLE `usuario` (
   `nombre_usuario` varchar(250) DEFAULT NULL,
   `pass_usuario` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`rut_usuario`, `nombre_usuario`, `pass_usuario`) VALUES
+('18123456-3', 'Usuario', '123');
 
 --
 -- Disparadores `usuario`
