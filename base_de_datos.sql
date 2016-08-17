@@ -32,6 +32,10 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `validate_rut` (`RUT` VARCHAR(12)) RE
 	DECLARE temprut VARCHAR(12);
 	DECLARE verify_dv CHAR(2);
 	DECLARE DV CHAR(1);
+	IF NOT(RUT like '%-%') THEN
+		return 0;
+	end if;
+	
 	SET RUT = REPLACE(REPLACE(RUT, '.', ''),'-','');
 	SET DV = SUBSTR(RUT,-1,1);
 	SET RUT = SUBSTR(RUT,1,LENGTH(RUT)-1);
