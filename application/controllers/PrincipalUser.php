@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Principaluser extends CI_Controller {
+class PrincipalUser extends CI_Controller {
 
 	public function __construct(){
 		parent::__construct();
@@ -41,7 +41,12 @@ class Principaluser extends CI_Controller {
 		$crud->where('item.id_unidad_item',$id_post);
 		$crud->set_subject('Items');
 
+		$crud->columns('id_item','codigo_externo','tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','veces_reparacion_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+
+		//Cambiar nombre de atributo de la DB, por uno más apropiado para el usuario
+
 		$crud->display_as('id_item','ID');
+		$crud->display_as('codigo_externo','Codigo Externo');
 		$crud->display_as('veces_reparacion_item','Número Reparaciones');
 		$crud->display_as('id_item_relacionado_item','ID Item Rel.');
 		$crud->display_as('id_unidad_item','Unidad');
@@ -50,35 +55,57 @@ class Principaluser extends CI_Controller {
 		$crud->display_as('id_empresa_desechadora_item','Emp. Desechadora');
 		$crud->display_as('tipo_item','Tipo de Producto');
 
+		//Relaciones
 		$crud->set_relation('id_unidad_item','unidad','nombre_unidad');		
 		$crud->set_relation('id_empresa_proveedora_item','empresa_externa','nombre_ex');
 		$crud->set_relation('id_empresa_reparadora_item','empresa_externa','nombre_ex');
 		$crud->set_relation('id_empresa_desechadora_item','empresa_externa','nombre_ex');
 
-		$crud->field_type('estado_item','dropdown',array('ACTIVO' => 'ACTIVO',
+		$crud->callback_add_field('tipo_item',array($this,'callback_to_upper'));
+		$crud->callback_before_insert(array($this,'prepare'));
+
+		//El campo 'estado' es de tipo DROPDOWN
+		$crud->field_type('estado_item','dropdown',array('ACTIVO' => 'ACTIVO' ,
 													'REPARACION' => 'REPARACION',
 													'EN TRANSITO' => 'EN TRANSITO',
 													'DE BAJA' => 'DE BAJA'));
-		
-		$crud->add_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
 
-		//Comentado en siguiente función, es el mismo funcionamiento
+		
+
+		if($crud->getState()=='add'){
+			$crud->set_relation('id_item_relacionado_item','item','descripcion_item');
+			$crud->add_fields('codigo_externo','tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+			$crud->required_fields('tipo_item','fecha_ingreso_item');
+		}
+		//Si se está editando...
 		if($crud->getState()=='edit'){
 			$crud->set_relation('id_item_relacionado_item','item','id_item');
 			$tipo=null;
 
+			//Se consulta el tipo del item que se va a editar...
 			$auxiliar['valor']=$this->grocery_crud->getStateInfo()->primary_key;
 			$datos['respuesta_db']=$this->User_Model->consultar_tipo_item($auxiliar);
+			$datos['respuesta_db_1']=$this->User_Model->consultar_item_relacionado($auxiliar);
 
+			foreach ($datos['respuesta_db_1'] -> result() as $atributo1) {
+				$id_item_rel=$atributo1->id_item_relacionado_item;
+			}
+
+			//Se capta el resultado...
 			foreach ($datos['respuesta_db'] -> result() as $atributo) {
 				$tipo=$atributo->tipo_item;
 			}
+
 			if($tipo=='EQUIPO'){
-				$crud->edit_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
-				$crud->required_fields('tipo_item','descripcion_item','estado_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				$crud->edit_fields('descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
 			}else{
-				$crud->edit_fields('tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
-				$crud->required_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				if($id_item_rel!=null){
+
+					$crud->edit_fields('descripcion_item','fecha_ingreso_item','id_empresa_proveedora_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+
+				}else{
+					$crud->edit_fields('descripcion_item','id_item_relacionado_item','estado_item','fecha_ingreso_item','fecha_baja_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+				}	
 			}
 		}
 
@@ -96,10 +123,12 @@ class Principaluser extends CI_Controller {
 		$crud->set_table('item');
 		$crud->set_subject('Lista Completa Inventario');
 
-		$crud->columns('tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','veces_reparacion_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+		$crud->columns('id_item','codigo_externo','tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','veces_reparacion_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
 
 		//Cambiar nombre de atributo de la DB, por uno más apropiado para el usuario
+
 		$crud->display_as('id_item','ID');
+		$crud->display_as('codigo_externo','Codigo Externo');
 		$crud->display_as('veces_reparacion_item','Número Reparaciones');
 		$crud->display_as('id_item_relacionado_item','ID Item Rel.');
 		$crud->display_as('id_unidad_item','Unidad');
@@ -114,23 +143,35 @@ class Principaluser extends CI_Controller {
 		$crud->set_relation('id_empresa_reparadora_item','empresa_externa','nombre_ex');
 		$crud->set_relation('id_empresa_desechadora_item','empresa_externa','nombre_ex');
 
+		$crud->callback_add_field('tipo_item',array($this,'callback_to_upper'));
+		$crud->callback_before_insert(array($this,'prepare'));
+
 		//El campo 'estado' es de tipo DROPDOWN
 		$crud->field_type('estado_item','dropdown',array('ACTIVO' => 'ACTIVO' ,
 													'REPARACION' => 'REPARACION',
 													'EN TRANSITO' => 'EN TRANSITO',
 													'DE BAJA' => 'DE BAJA'));
 
-		$crud->add_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+		
 
+		if($crud->getState()=='add'){
+			$crud->set_relation('id_item_relacionado_item','item','descripcion_item');
+			$crud->add_fields('codigo_externo','tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+			$crud->required_fields('tipo_item','fecha_ingreso_item');
+		}
 		//Si se está editando...
 		if($crud->getState()=='edit'){
 			$crud->set_relation('id_item_relacionado_item','item','id_item');
-
 			$tipo=null;
 
 			//Se consulta el tipo del item que se va a editar...
 			$auxiliar['valor']=$this->grocery_crud->getStateInfo()->primary_key;
 			$datos['respuesta_db']=$this->User_Model->consultar_tipo_item($auxiliar);
+			$datos['respuesta_db_1']=$this->User_Model->consultar_item_relacionado($auxiliar);
+
+			foreach ($datos['respuesta_db_1'] -> result() as $atributo1) {
+				$id_item_rel=$atributo1->id_item_relacionado_item;
+			}
 
 			//Se capta el resultado...
 			foreach ($datos['respuesta_db'] -> result() as $atributo) {
@@ -138,13 +179,18 @@ class Principaluser extends CI_Controller {
 			}
 
 			if($tipo=='EQUIPO'){
-				$crud->edit_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
-				$crud->required_fields('tipo_item','descripcion_item','estado_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				$crud->edit_fields('descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
 			}else{
-				$crud->edit_fields('tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
-				$crud->required_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				if($id_item_rel!=null){
+
+					$crud->edit_fields('descripcion_item','fecha_ingreso_item','id_empresa_proveedora_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+
+				}else{
+					$crud->edit_fields('descripcion_item','id_item_relacionado_item','estado_item','fecha_ingreso_item','fecha_baja_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+				}	
 			}
 		}
+
 
 		$output = $crud->render();
 		$this->load->view('user/head',$output);
@@ -187,6 +233,11 @@ class Principaluser extends CI_Controller {
 													'EN TRANSITO' => 'EN TRANSITO',
 													'DE BAJA' => 'DE BAJA'));
 
+		if($crud->getState()=='edit'){
+
+			$crud->edit_fields('descripcion_cpt','estado_cpt','fecha_ingreso_cpt','fecha_baja_cpt','id_empresa_reparadora_cpt','id_empresa_desechadora_cpt');
+		}
+		
 		$output = $crud->render();
 	
 		$this->load->view('user/head',$output);
@@ -205,7 +256,7 @@ class Principaluser extends CI_Controller {
 		$crud->set_table('item');
 		$crud->set_subject('Inventario');
 
-		$crud->columns('id_item','tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','veces_reparacion_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+		$crud->columns('id_item','codigo_externo','tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','veces_reparacion_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
 
 		$crud->display_as('id_item','ID');
 		$crud->display_as('veces_reparacion_item','Número Reparaciones');
@@ -233,25 +284,39 @@ class Principaluser extends CI_Controller {
 
 		//Comentado en siguiente función, es el mismo funcionamiento
 		if($crud->getState()=='edit'){
-			$crud->set_relation('id_item_relacionado_item','item','descripcion_item');
+			$crud->set_relation('id_item_relacionado_item','item','id_item');
+
 			$tipo=null;
 
+			//Se consulta el tipo del item que se va a editar...
 			$auxiliar['valor']=$this->grocery_crud->getStateInfo()->primary_key;
 			$datos['respuesta_db']=$this->User_Model->consultar_tipo_item($auxiliar);
+			$datos['respuesta_db_1']=$this->User_Model->consultar_item_relacionado($auxiliar);
 
+			foreach ($datos['respuesta_db_1'] -> result() as $atributo1) {
+				$id_item_rel=$atributo1->id_item_relacionado_item;
+			}
+
+			//Se capta el resultado...
 			foreach ($datos['respuesta_db'] -> result() as $atributo) {
 				$tipo=$atributo->tipo_item;
 			}
+
 			if($tipo=='EQUIPO'){
-				$crud->edit_fields('descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
-				$crud->required_fields('descripcion_item','estado_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				$crud->edit_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				$crud->required_fields('tipo_item','descripcion_item','estado_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
 			}else{
-				$crud->edit_fields('descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
-				$crud->required_fields('descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				if($id_item_rel!=null){
+
+					$crud->edit_fields('descripcion_item','fecha_ingreso_item','fecha_baja_item','id_empresa_proveedora_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+
+				}else{
+					$crud->edit_fields('tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
+					$crud->required_fields('tipo_item','descripcion_item','fecha_ingreso_item','id_unidad_item','id_empresa_proveedora_item');
+				}	
 			}
 		}
-		$crud->columns('id_item','tipo_item','descripcion_item','estado_item','fecha_ingreso_item','fecha_baja_item','veces_reparacion_item','id_item_relacionado_item','id_unidad_item','id_empresa_proveedora_item','id_empresa_reparadora_item','id_empresa_desechadora_item');
-		
+
 		if ($this->input->post('unidad-post')!=null){
 			//echo "si";
 			$id_post=$this->input->post('unidad-post');
@@ -285,6 +350,8 @@ class Principaluser extends CI_Controller {
 		$crud->display_as('fecha_hi','Fecha');
 		$crud->display_as('descripcion_hi','Descripción');
 
+		$crud->unset_edit();
+
 		$output = $crud->render();
 		$this->load->view('user/head',$output);
 		$this->load->view('user/header');
@@ -293,8 +360,7 @@ class Principaluser extends CI_Controller {
 
 	}
 
-	public function loadData()
-	{
+	public function loadData(){
 		$loadType=$_POST['loadType'];
 		$loadId=$_POST['loadId'];
 

@@ -13,6 +13,14 @@ class Administrador_Model extends CI_Model{
 		if($respuesta) return $respuesta;
 		else return FALSE;
 	}
+
+	public function consultar_item_relacionado($arreglo){
+		$consulta="SELECT id_item_relacionado_item FROM item WHERE
+					id_item=".$arreglo['valor']."";
+		$respuesta=$this->db->query($consulta);
+		return $respuesta;
+	}
+	
 	
 	public function consultar_nombres_universidades(){
 		$consulta="SELECT nombre_uni FROM universidad";
